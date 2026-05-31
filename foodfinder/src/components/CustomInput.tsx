@@ -4,15 +4,17 @@ interface Props {
   placeholder: string;
   value: string;
   onChange: (text: string) => void;
+  type?:string;
 }
 
-export default function CustomInput({ placeholder, value, onChange }: Props) {
+export default function CustomInput({ placeholder, value, onChange, type }: Props) {
   return (
     <TextInput
       style={styles.input}
       placeholder={placeholder}
       value={value}
       onChangeText={onChange}
+      secureTextEntry={type === 'password'}
     />
   );
 }
