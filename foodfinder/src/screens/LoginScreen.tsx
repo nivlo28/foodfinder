@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }: any) {
       return;
     }
 
-    navigation.navigate('Home');
+    navigation.navigate('MainTabs');
   };
 
   return (
