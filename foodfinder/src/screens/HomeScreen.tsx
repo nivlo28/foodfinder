@@ -1,19 +1,21 @@
 import { View, Text, StyleSheet } from 'react-native';
 import CustomButton from '../components/CustomButton';
-import {useState} from 'react';
+import { useState } from 'react';
 import CustomInput from '../components/CustomInput';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function HomeScreen() {
 
     const [searchText, setSearchText] = useState('');
     const navigation = useNavigation<any>();
+    const { colors } = useTheme();
 
     return (
 
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
 
-            <Text style={styles.title}>
+            <Text style={[styles.title, { color: colors.primary }]}>
                 FoodFinder
             </Text>
 
@@ -23,7 +25,7 @@ export default function HomeScreen() {
                 onChange={setSearchText}
             />
 
-            <Text style={styles.subtitle}>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
                 Encuentra tus lugares favoritos para comer
             </Text>
 
@@ -39,30 +41,20 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-
     container: {
-
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        padding: 20
-
+        padding: 20,
     },
-
     title: {
-
         fontSize: 32,
         fontWeight: "bold",
-        marginBottom: 10
-
+        marginBottom: 10,
     },
-
     subtitle: {
-
         fontSize: 16,
         marginBottom: 25,
-        textAlign: "center"
-
+        textAlign: "center",
     }
-
 });
