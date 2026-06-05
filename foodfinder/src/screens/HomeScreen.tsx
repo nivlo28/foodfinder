@@ -40,6 +40,7 @@ export default function HomeScreen() {
                 <CategoryCard title="Gourmet" icon="🍽️" />
                 <CategoryCard title="Italiano" icon="🍝" />
                 <CategoryCard title="Mexicano" icon="🌮" />
+                <CategoryCard title="Postres" icon="🍰" />
             </ScrollView>
 
             <CustomButton
@@ -70,4 +71,4 @@ const styles = StyleSheet.create({
         marginBottom: 25,
         textAlign: "center",
     }
-});
+}); a
