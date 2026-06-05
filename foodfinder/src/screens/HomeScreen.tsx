@@ -4,6 +4,8 @@ import { useState } from 'react';
 import CustomInput from '../components/CustomInput';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/ThemeContext';
+import CategoryCard from '../components/CategoryCard';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default function HomeScreen() {
 
@@ -28,6 +30,17 @@ export default function HomeScreen() {
             <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
                 Encuentra tus lugares favoritos para comer
             </Text>
+
+           <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{flexGrow: 0}}
+            contentContainerStyle={{ paddingHorizontal: 10, flexDirection: "row" }}
+            >
+                <CategoryCard title="Gourmet" icon="🍽️" />
+                <CategoryCard title="Italiano" icon="🍝" />
+                <CategoryCard title="Mexicano" icon="🌮" />
+            </ScrollView>
 
             <CustomButton
                 title="Ver Restaurantes"
