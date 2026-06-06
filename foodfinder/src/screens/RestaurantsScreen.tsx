@@ -1,29 +1,28 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
-import RatingStar from '../components/RatingStar';
 import RestaurantCard from '../components/RestaurantCard';
-import { Image } from 'react-native';
-
 
 export default function RestaurantsScreen() {
     const { colors } = useTheme();
-    
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <Text style={[styles.title, { color: colors.primary }]}>
-                Restaurantes
-            </Text>
-          <RestaurantCard
-          name="Cima Restaurant"
-          category="Comida Gourmet"
-            location="San Pedro Sula, Cortés"
-            price="L.400 promedio"
-            rating={5}
-            image={require('../../assets/Cima.jpg')}
-            />
+        <ScrollView style={{ backgroundColor: colors.background }}>
+            <View style={styles.container}>
+                <Text style={[styles.title, { color: colors.primary }]}>
+                    Restaurantes
+                </Text>
 
-        </View>
+                <RestaurantCard
+                    id="1"
+                    name="Cima Restaurant"
+                    category="Comida Gourmet"
+                    location="San Pedro Sula, Cortés"
+                    price="L.400 promedio"
+                    rating={5}
+                    image={require('../../assets/Cima.jpg')}
+                />
+            </View>
+        </ScrollView>
     );
 }
 
@@ -36,10 +35,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: "bold",
-    },
-    image: {
-        width: 250,
-        height: 180,
-        borderRadius: 12,
+        marginBottom: 15,
     },
 });

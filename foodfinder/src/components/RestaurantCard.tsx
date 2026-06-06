@@ -1,50 +1,71 @@
-import {Text,StyleSheet, View,Image} from "react-native";
+import { Text, StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import RatingStar from "./RatingStar";
 import { useTheme } from "../contexts/ThemeContext";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { toggleFavorite } from "../store/slices/favoritesSlice";
+import { Ionicons } from "@expo/vector-icons";
 
 type RestaurantCardProps = {
+    id: string;
     name: string;
     category: string;
     location: string;
     price: string;
     rating: number;
-    image:any;
+    image: any;
 };
 
 export default function RestaurantCard({
+    id,
     name,
     category,
     location,
     price,
     rating,
     image,
-}:RestaurantCardProps){
-    const{colors} = useTheme();
-    
+}: RestaurantCardProps) {
+    const { colors } = useTheme();
+    const dispatch = useAppDispatch();
+    const favorites = useAppSelector(state => state.favorites.items);
+
+    // Verifica si ya está en favoritos
+    const isFavorite = favorites.some(item => item.id === id);
+
+    const handleToggle = () => {
+        dispatch(toggleFavorite({ id, name, category, location, price, rating, image }));
+    };
+
     return (
-        <View style={[styles.card,
-        {backgroundColor:colors.inputBackground, borderColor:colors.border}]}>
+        <View style={[styles.card, { backgroundColor: colors.inputBackground, borderColor: colors.border }]}>
 
             <Image source={image} style={styles.image} />
 
-            <Text style={[styles.name, {color:colors.text}]}>
-                {name}
-            </Text>
+            {/* Fila de nombre y corazón */}
+            <View style={styles.row}>
+                <Text style={[styles.name, { color: colors.text }]}>
+                    {name}
+                </Text>
+                <TouchableOpacity onPress={handleToggle}>
+                    <Ionicons
+                        name={isFavorite ? "heart" : "heart-outline"}
+                        size={24}
+                        color={isFavorite ? colors.error : colors.textSecondary}
+                    />
+                </TouchableOpacity>
+            </View>
 
-            <Text style={[styles.category, {color:colors.textSecondary}]}>
+            <Text style={[styles.category, { color: colors.textSecondary }]}>
                 {category}
             </Text>
-            <Text style={[styles.location, {color:colors.textSecondary}]}>
+            <Text style={[styles.location, { color: colors.textSecondary }]}>
                 {location}
             </Text>
-            <Text style={[styles.price, {color:colors.primary}]}>
+            <Text style={[styles.price, { color: colors.primary }]}>
                 {price}
             </Text>
 
-            <RatingStar
-            rating={rating}
-            readonly={true}
-            />
+            <RatingStar rating={rating} readonly={true} />
+
         </View>
     );
 }
@@ -52,15 +73,20 @@ export default function RestaurantCard({
 const styles = StyleSheet.create({
     card: {
         width: "100%",
-        padding: 15,    
+        padding: 15,
         borderRadius: 12,
         borderWidth: 1,
         marginBottom: 15,
     },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 5,
+    },
     name: {
         fontSize: 18,
         fontWeight: "bold",
-        marginBottom: 5,
     },
     category: {
         fontSize: 14,
