@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }: any) {
         value={password}
         onChange={setPassword}
       />
-
+<View style={styles.buttonsContainer}>
       <CustomButton
         title="Iniciar Sesión"
         onPress={handleLogin}
@@ -57,6 +57,7 @@ export default function LoginScreen({ navigation }: any) {
         onPress={() => navigation.navigate('Register')}
       />
 
+    </View>
     </View>
   );
 }
@@ -71,10 +72,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 20,
   },
   subtitle: {
     fontSize: 15,
     marginBottom: 32,
+    marginTop: -10,
+  },
+  buttonsContainer: {
+    width: '50%',
+    gap: 12,
+    marginTop: 10,
   },
 });

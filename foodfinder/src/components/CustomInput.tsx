@@ -1,5 +1,7 @@
-import { TextInput, View, Text, StyleSheet, KeyboardTypeOptions } from 'react-native';
+import { TextInput, View, Text, StyleSheet, KeyboardTypeOptions, TouchableOpacity } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
+import { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   placeholder: string;
@@ -11,6 +13,7 @@ interface Props {
 export default function CustomInput({ placeholder, value, onChange, type = 'text' }: Props) {
 
   const { colors } = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
 
   const keyboardType: KeyboardTypeOptions =
     type === 'email' ? 'email-address' :
@@ -24,22 +27,35 @@ export default function CustomInput({ placeholder, value, onChange, type = 'text
   };
 
   const error = getError();
+  const isPassword = type === 'password';
 
   return (
     <View style={styles.wrapper}>
-      <TextInput
-        style={[styles.input, {
-          backgroundColor: colors.inputBackground,
-          borderColor: error ? colors.error : colors.border,
-          color: colors.text,
-        }]}
-        placeholder={placeholder}
-        placeholderTextColor={colors.textSecondary}
-        value={value}
-        onChangeText={onChange}
-        secureTextEntry={type === 'password'}
-        keyboardType={keyboardType}
-      />
+      <View style={[styles.inputContainer, {
+        backgroundColor: colors.inputBackground,
+        borderColor: error ? colors.error : colors.border,
+      }]}>
+        <TextInput
+          style={[styles.input, { color: colors.text }]}
+          placeholder={placeholder}
+          placeholderTextColor={colors.textSecondary}
+          value={value}
+          onChangeText={onChange}
+          secureTextEntry={isPassword && !showPassword}  
+          keyboardType={keyboardType}
+        />
+        
+        {isPassword && (
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeButton}>
+            <Ionicons 
+              name={showPassword ? "eye" : "eye-off"} 
+              size={22} 
+              color={colors.textSecondary} 
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+      
       {error && <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>}
     </View>
   );
@@ -60,5 +76,17 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 12,
     marginTop: 4,
+  },
+  inputContainer: {
+    width: '100%',
+    borderWidth: 1.5,
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  eyeButton: {
+    right: 40,
+    padding: 5,
   },
 });
