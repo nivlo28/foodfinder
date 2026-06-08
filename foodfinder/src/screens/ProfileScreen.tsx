@@ -9,31 +9,29 @@ export default function ProfileScreen() {
   const { colors } = useTheme();
   const { user } = useAuth();
 
-  const [name, setName] = useState("Christopher Diaz");
-  const [phone, setPhone] = useState("");
+  const [name, setName] = useState(user?.name || "");
+  const [phone, setPhone] = useState(user?.phone || "");
 
   return (
     <ScrollView style={{ backgroundColor: colors.background }}>
 
-      {/* Avatar section — igual que la inge */}
       <View style={[styles.avatarSection, { backgroundColor: colors.inputBackground }]}>
         <View style={[styles.avatar, { backgroundColor: colors.secondary }]}>
           <Text style={styles.avatarText}>
-            {name.charAt(0).toUpperCase()}
+            {(user?.name || "?").charAt(0).toUpperCase()}
           </Text>
         </View>
         <Text style={[styles.userName, { color: colors.text }]}>
-          {name}
+          {user?.name || "Sin nombre"}
         </Text>
         <Text style={[styles.email, { color: colors.textSecondary }]}>
-          {user}
+          {user?.email || "Sin correo"}
         </Text>
       </View>
 
-      {/* Stats — igual al diseño que mandaste */}
       <View style={[styles.statsRow, { backgroundColor: colors.inputBackground }]}>
         <View style={styles.statItem}>
-          <Text style={[styles.statNumber, { color: colors.primary }]}>4</Text>
+          <Text style={[styles.statNumber, { color: colors.primary }]}>0</Text>
           <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Reservas</Text>
         </View>
         <View style={styles.statItem}>
@@ -46,7 +44,6 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Información básica */}
       <View style={styles.section}>
         <Text style={[styles.sectionLabel, { color: colors.primary }]}>
           Información básica

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function RegisterScreen({ navigation }: any) {
     const [name, setName] = useState('');
@@ -18,6 +19,7 @@ export default function RegisterScreen({ navigation }: any) {
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
     const { colors } = useTheme();
+    const { register } = useAuth();
 
     const handleRegister = () => {
         setNameError('');
@@ -65,6 +67,7 @@ export default function RegisterScreen({ navigation }: any) {
 
         if (hasError) return;
 
+        register(name, email, phone);
         navigation.navigate('MainTabs');
     };
 
