@@ -4,6 +4,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { toggleFavorite } from "../store/slices/favoritesSlice";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 type RestaurantCardProps = {
     id: string;
@@ -25,6 +26,7 @@ export default function RestaurantCard({
     image,
 }: RestaurantCardProps) {
     const { colors } = useTheme();
+    const navigation = useNavigation<any>();
     const dispatch = useAppDispatch();
     const favorites = useAppSelector(state => state.favorites.items);
 
@@ -35,7 +37,20 @@ export default function RestaurantCard({
         dispatch(toggleFavorite({ id, name, category, location, price, rating, image }));
     };
 
+
     return (
+        <TouchableOpacity
+        style={{width:"100%"}}
+        onPress={()=> navigation.navigate("RestaurantDetail",{
+            id,
+            name,
+            category,
+            location,
+            price,
+            rating,
+            image,
+        })}
+        >
         <View style={[styles.card, { backgroundColor: colors.inputBackground, borderColor: colors.border }]}>
 
             <Image source={image} style={styles.image} />
@@ -67,6 +82,8 @@ export default function RestaurantCard({
             <RatingStar rating={rating} readonly={true} />
 
         </View>
+        </TouchableOpacity>
+
     );
 }
 
