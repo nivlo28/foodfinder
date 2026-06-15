@@ -1,10 +1,12 @@
 import { useRoute } from "@react-navigation/native";
 import { View, Text, StyleSheet, Image } from "react-native";
 import RatingStar from "../components/RatingStar";
+import { useTheme } from "../contexts/ThemeContext";
 
 
 export default function RestaurantDetailScreen() {
     const route = useRoute<any>();
+    const {colors}=useTheme();
 
     const{
         name,
@@ -15,14 +17,18 @@ export default function RestaurantDetailScreen() {
         image,
     } = route.params;
    return (
-    <View style={styles.container}>
+     <View style={[styles.container,{backgroundColor:colors.background}
+      ]}
+    >
 
         <Image
             source={image}
             style={styles.image}
         />
 
-        <Text style={styles.title}>
+        <Text style={[styles.title,{color:colors.text}
+        ]}
+        >
             {name}
         </Text>
 
@@ -31,15 +37,15 @@ export default function RestaurantDetailScreen() {
             readonly={true}
         />
 
-        <Text style={styles.info}>
+        <Text style={[styles.info,{color:colors.textSecondary}]}>
             🍽️ {category}
         </Text>
 
-        <Text style={styles.info}>
+        <Text style={[styles.info,{color:colors.textSecondary}]}>
             📍 {location}
         </Text>
 
-        <Text style={styles.price}>
+        <Text style={[styles.price,{color:colors.primary}]}>
             💰 {price}
         </Text>
 

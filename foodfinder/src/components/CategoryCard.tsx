@@ -4,16 +4,19 @@ import { useTheme } from "../contexts/ThemeContext";
 type CategoryCardProps = {
   title: string;
   icon: string;
+  onPress?: () =>void;
 };
 
 export default function CategoryCard({
   title,
   icon,
+  onPress,
 }: CategoryCardProps) {
   const { colors } = useTheme();
 
   return (
     <TouchableOpacity
+    onPress={onPress}
       style={[
         styles.container,
         {
