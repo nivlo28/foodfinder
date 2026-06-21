@@ -12,14 +12,16 @@ export default function LoginScreen({ navigation }: any) {
   const { login } = useAuth();
   const { colors } = useTheme();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (email === '' || password === '') {
       console.log('Debe llenar todos los campos');
       return;
     }
 
-    login(email);
-    navigation.navigate('MainTabs');
+    const success = await login(email, password);
+    if (success) {
+      navigation.navigate('MainTabs');
+    }
   };
 
   return (

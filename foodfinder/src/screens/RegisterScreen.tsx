@@ -21,7 +21,7 @@ export default function RegisterScreen({ navigation }: any) {
     const { colors } = useTheme();
     const { register } = useAuth();
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         setNameError('');
         setEmailError('');
         setPhoneError('');
@@ -55,6 +55,9 @@ export default function RegisterScreen({ navigation }: any) {
         if (password === '') {
             setPasswordError('La contraseña es obligatoria');
             hasError = true;
+        } else if (password.length < 6) {
+            setPasswordError('La contraseña debe tener al menos 6 caracteres');
+            hasError = true;
         }
 
         if (confirmPassword === '') {
@@ -67,8 +70,14 @@ export default function RegisterScreen({ navigation }: any) {
 
         if (hasError) return;
 
-        register(name, email, phone);
-        navigation.navigate('MainTabs');
+        const { success, hasSession } = await register(name.trim(), email.trim(), phone.trim(), password);
+        if (!success) return;
+
+        if (hasSession) {
+            navigation.navigate('MainTabs');
+        } else {
+            navigation.navigate('Login');
+        }
     };
 
     return (
