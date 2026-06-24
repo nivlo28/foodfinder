@@ -1,158 +1,258 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
-import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function RegisterScreen({ navigation }: any) {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+  const { register } = useAuth();
+  const { colors } = useTheme();
 
-    const [nameError, setNameError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [phoneError, setPhoneError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-    const { colors } = useTheme();
-    const { register } = useAuth();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    const handleRegister = async () => {
-        setNameError('');
-        setEmailError('');
-        setPhoneError('');
-        setPasswordError('');
-        setConfirmPasswordError('');
+  const handleRegister = async () => {
+    setError('');
 
-        let hasError = false;
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !password ||
+      !confirmPassword
+    ) {
+      setError('Complete todos los campos');
+      return;
+    }
 
-        if (name.trim() === '') {
-            setNameError('El nombre es obligatorio');
-            hasError = true;
-        }
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (email.trim() === '') {
-            setEmailError('El correo es obligatorio');
-            hasError = true;
-        } else if (!emailRegex.test(email)) {
-            setEmailError('Correo no válido');
-            hasError = true;
-        }
+    if (password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
 
-        if (phone.trim() === '') {
-            setPhoneError('El teléfono es obligatorio');
-            hasError = true;
-        } else if (phone.length !== 8) {
-            setPhoneError('El teléfono debe tener 8 dígitos');
-            hasError = true;
-        }
+    setLoading(true);
 
-        if (password === '') {
-            setPasswordError('La contraseña es obligatoria');
-            hasError = true;
-        } else if (password.length < 6) {
-            setPasswordError('La contraseña debe tener al menos 6 caracteres');
-            hasError = true;
-        }
+    try {
+      const success = await register(
+        name,
+        email.trim(),
+        phone,
+        password
+      );
 
-        if (confirmPassword === '') {
-            setConfirmPasswordError('Confirma tu contraseña');
-            hasError = true;
-        } else if (password !== confirmPassword) {
-            setConfirmPasswordError('Las contraseñas no coinciden');
-            hasError = true;
-        }
+      if (success) {
+        navigation.navigate('Login');
+      } else {
+        setError('No se pudo crear la cuenta');
+      }
+    } catch (err) {
+      setError('Ocurrió un error al registrarse');
+    }
 
-        if (hasError) return;
+    setLoading(false);
+  };
 
-        const { success, hasSession } = await register(name.trim(), email.trim(), phone.trim(), password);
-        if (!success) return;
+  return (
+    <KeyboardAvoidingView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.logoContainer}>
+          <Text style={styles.logo}>🍔</Text>
 
-        if (hasSession) {
-            navigation.navigate('MainTabs');
-        } else {
-            navigation.navigate('Login');
-        }
-    };
+          <Text style={[styles.title, { color: colors.text }]}>
+            Crear Cuenta
+          </Text>
 
-    return (
-        <ScrollView style={{ backgroundColor: colors.background }}>
-            <View style={styles.container}>
+          <Text
+            style={[
+              styles.subtitle,
+              { color: colors.textSecondary },
+            ]}
+          >
+            Únete a FoodFinder
+          </Text>
+        </View>
 
-                <Text style={[styles.title, { color: colors.primary }]}>
-                    Crear cuenta
-                </Text>
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: colors.headerBackground,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <Text style={[styles.cardTitle, { color: colors.text }]}>
+            Registro
+          </Text>
 
-                <CustomInput
-                    placeholder="Nombre completo"
-                    value={name}
-                    onChange={setName}
-                    type="text"
-                />
-                {nameError ? <Text style={[styles.error, { color: colors.error }]}>{nameError}</Text> : null}
+          <CustomInput
+            label="Nombre completo"
+            placeholder="Pedro Diaz"
+            value={name}
+            onChange={setName}
+          />
 
-                <CustomInput
-                    placeholder="Correo electrónico"
-                    value={email}
-                    onChange={setEmail}
-                    type="email"
-                />
-                {emailError ? <Text style={[styles.error, { color: colors.error }]}>{emailError}</Text> : null}
+          <CustomInput
+            label="Correo electrónico"
+            placeholder="ejemplo@gmail.com"
+            value={email}
+            onChange={setEmail}
+            type="email"
+          />
 
-                <CustomInput
-                    placeholder="Teléfono"
-                    value={phone}
-                    onChange={setPhone}
-                    type="number"
-                />
-                {phoneError ? <Text style={[styles.error, { color: colors.error }]}>{phoneError}</Text> : null}
+          <CustomInput
+            label="Teléfono"
+            placeholder="9999-9999"
+            value={phone}
+            onChange={setPhone}
+            type="number"
+          />
 
-                <CustomInput
-                    type="password"
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={setPassword}
-                />
-                {passwordError ? <Text style={[styles.error, { color: colors.error }]}>{passwordError}</Text> : null}
+          <CustomInput
+            label="Contraseña"
+            placeholder="Mínimo 6 caracteres"
+            value={password}
+            onChange={setPassword}
+            type="password"
+          />
 
-                <CustomInput
-                    type="password"
-                    placeholder="Confirmar contraseña"
-                    value={confirmPassword}
-                    onChange={setConfirmPassword}
-                />
-                {confirmPasswordError ? <Text style={[styles.error, { color: colors.error }]}>{confirmPasswordError}</Text> : null}
+          <CustomInput
+            label="Confirmar contraseña"
+            placeholder="Repita su contraseña"
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            type="password"
+          />
 
-                <CustomButton
-                    title="Registrarse"
-                    onPress={handleRegister}
-                />
+          {error ? (
+            <Text style={[styles.error, { color: colors.error }]}>
+              {error}
+            </Text>
+          ) : null}
 
-            </View>
-        </ScrollView>
-    );
+          <CustomButton
+            title="Crear Cuenta"
+            onPress={handleRegister}
+            loading={loading}
+          />
+
+          <View style={styles.footer}>
+            <Text
+              style={[
+                styles.footerText,
+                { color: colors.textSecondary },
+              ]}
+            >
+              ¿Ya tienes cuenta?
+            </Text>
+
+            <Text
+              style={[
+                styles.linkText,
+                { color: colors.primary },
+              ]}
+              onPress={() => navigation.goBack()}
+            >
+              Iniciar sesión
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        padding: 24,
-    },
-    title: {
-        fontSize: 30,
-        fontWeight: "bold",
-        marginBottom: 24,
-        marginTop: 20,
-    },
-    error: {
-        fontSize: 12,
-        marginBottom: 8,
-        alignSelf: "flex-start",
-    },
+  container: {
+    flex: 1,
+  },
+
+  content: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 24,
+  },
+
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+
+  logo: {
+    fontSize: 60,
+    marginBottom: 10,
+  },
+
+  title: {
+    fontSize: 32,
+    fontWeight: '800',
+  },
+
+  subtitle: {
+    marginTop: 5,
+    fontSize: 15,
+  },
+
+  card: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 22,
+  },
+
+  cardTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+
+  error: {
+    fontSize: 13,
+    marginBottom: 12,
+    fontWeight: '600',
+  },
+
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+
+  footerText: {
+    fontSize: 14,
+  },
+
+  linkText: {
+    fontSize: 14,
+    fontWeight: '700',
+    marginLeft: 5,
+  },
 });

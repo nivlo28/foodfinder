@@ -8,55 +8,56 @@ interface Props {
   value: string;
   onChange: (text: string) => void;
   type?: 'text' | 'email' | 'password' | 'number';
+  label?: string;
+  errorMessage?: string;
 }
 
-export default function CustomInput({ placeholder, value, onChange, type = 'text' }: Props) {
-
+export default function CustomInput({ placeholder, value, onChange, type = 'text', label, errorMessage }: Props) {
   const { colors } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const keyboardType: KeyboardTypeOptions =
-    type === 'email' ? 'email-address' :
-    type === 'number' ? 'phone-pad' :
-    'default';
+    type === 'email' ? 'email-address' : type === 'number' ? 'phone-pad' : 'default';
 
-  const getError = () => {
-    if (type === 'email' && value.length > 0 && !value.includes('@')) return 'Correo inválido';
-    if (type === 'number' && value.length > 0 && value.length !== 8) return 'Teléfono inválido';
-    return null;
-  };
-
-  const error = getError();
   const isPassword = type === 'password';
+  const hasError = Boolean(errorMessage);
 
   return (
     <View style={styles.wrapper}>
-      <View style={[styles.inputContainer, {
-        backgroundColor: colors.inputBackground,
-        borderColor: error ? colors.error : colors.border,
-      }]}>
+      {label ? <Text style={[styles.label, { color: colors.text }]}>{label}</Text> : null}
+
+      <View
+        style={[
+          styles.inputContainer,
+          {
+            backgroundColor: colors.inputBackground,
+            borderColor: hasError ? colors.error : focused ? colors.primary : colors.border,
+          },
+        ]}
+      >
         <TextInput
           style={[styles.input, { color: colors.text }]}
           placeholder={placeholder}
           placeholderTextColor={colors.textSecondary}
           value={value}
           onChangeText={onChange}
-          secureTextEntry={isPassword && !showPassword}  
+          secureTextEntry={isPassword && !showPassword}
           keyboardType={keyboardType}
+          autoCapitalize={type === 'email' || type === 'password' ? 'none' : 'words'}
+          autoCorrect={false}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
         />
-        
+
         {isPassword && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeButton}>
-            <Ionicons 
-              name={showPassword ? "eye" : "eye-off"} 
-              size={22} 
-              color={colors.textSecondary} 
-            />
+            <Ionicons name={showPassword ? 'eye' : 'eye-off'} size={21} color={colors.textSecondary} />
           </TouchableOpacity>
         )}
       </View>
-      
-      {error && <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>}
+
+      {hasError ? <Text style={[styles.errorText, { color: colors.error }]}>{errorMessage}</Text> : null}
     </View>
   );
 }
@@ -64,29 +65,33 @@ export default function CustomInput({ placeholder, value, onChange, type = 'text
 const styles = StyleSheet.create({
   wrapper: {
     width: '100%',
-    marginBottom: 16,
+    marginBottom: 14,
   },
-  input: {
-    width: '100%',
-    borderWidth: 1.5,
-    borderRadius: 10,
-    padding: 14,
-    fontSize: 15,
-  },
-  errorText: {
-    fontSize: 12,
-    marginTop: 4,
+  label: {
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 7,
   },
   inputContainer: {
     width: '100%',
-    borderWidth: 1.5,
-    borderRadius: 10,
+    minHeight: 52,
+    borderWidth: 1.4,
+    borderRadius: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    paddingHorizontal: 14,
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    paddingVertical: 12,
   },
   eyeButton: {
-    right: 40,
-    padding: 5,
+    paddingLeft: 10,
+    paddingVertical: 8,
+  },
+  errorText: {
+    fontSize: 12,
+    marginTop: 5,
   },
 });
