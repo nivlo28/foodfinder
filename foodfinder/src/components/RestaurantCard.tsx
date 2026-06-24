@@ -14,6 +14,8 @@ type RestaurantCardProps = {
     price: string;
     rating: number;
     image: any;
+    phone:string;
+    schedule:string;
 };
 
 export default function RestaurantCard({
@@ -24,6 +26,8 @@ export default function RestaurantCard({
     price,
     rating,
     image,
+    phone,
+    schedule,
 }: RestaurantCardProps) {
     const { colors } = useTheme();
     const navigation = useNavigation<any>();
@@ -49,6 +53,8 @@ export default function RestaurantCard({
             price,
             rating,
             image,
+            phone,
+            schedule,
         })}
         >
         <View style={[styles.card, { backgroundColor: colors.inputBackground, borderColor: colors.border }]}>

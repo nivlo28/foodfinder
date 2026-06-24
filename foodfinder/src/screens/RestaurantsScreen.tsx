@@ -14,15 +14,19 @@ export default function RestaurantsScreen() {
                     price:"L.400 promedio",
                     rating:5,
                     image:require('../../assets/restaurantes/Cima.jpg'),
+                    phone:"+504 2550-1001",
+                    schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
     },
           {
                     id:"2",
                     name:"Brasa Viva",
                     category:"Comida Mexicana",
-                    location:"Tegucigalpa, Francisco Morazán",
+                    location:"San Pedro Sula, Cortés",
                     price:"L.300 promedio",
                     rating:4,
                     image:require('../../assets/restaurantes/brasa viva.jpg'),
+                    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
           },
 {
                     id:"3",
@@ -32,6 +36,8 @@ export default function RestaurantsScreen() {
                     price:"L.350 promedio",
                     rating:5,
                     image:require('../../assets/restaurantes/TONY.jpg'),
+                    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
 },
 
 {
@@ -42,6 +48,8 @@ export default function RestaurantsScreen() {
                     price:"L.250 promedio",
                     rating:4,
                     image:require('../../assets/restaurantes/atelier.png'),
+                    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
 },
 
     {
@@ -52,7 +60,99 @@ export default function RestaurantsScreen() {
                     price:"L.400 promedio",
                     rating:5,
                     image:require('../../assets/restaurantes/osteria.png'),
+                    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
     },
+    {
+    id:"6",
+    name:"Madero Steak House",
+    category:"Parrilladas",
+    location:"Boulevard Mackey, San Pedro Sula",
+    price:"L.450 promedio",
+    rating:4,
+    image:require('../../assets/restaurantes/madero.png'),
+    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
+},
+
+{
+    id:"7",
+    name:"Denny's",
+    category:"Desayunos",
+    location:"Boulevard del Norte, San Pedro Sula",
+    price:"L.350 promedio",
+    rating:4,
+    image:require('../../assets/restaurantes/denny.png'),
+    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
+},
+
+{
+    id:"8",
+    name:"Silvestre",
+    category:"Comida Gourmet",
+    location:"Colonia Trejo, San Pedro Sula",
+    price:"L.500 promedio",
+    rating:3,
+    image:require('../../assets/restaurantes/silvestre.png'),
+    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
+},              
+{
+    id:"9",
+    name:"Welchez Café",
+    category:"Cafetería",
+    location:"Avenida Circunvalación, San Pedro Sula",
+    price:"L.180 promedio",
+    rating:3,
+    image:require('../../assets/restaurantes/welchz.png'),
+    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
+},  
+{
+    id:"10",
+    name:"Coffee Lab",
+    category:"Cafetería",
+    location:"Colonia Universidad, San Pedro Sula",
+    price:"L.230 promedio",
+    rating:5,
+    image:require('../../assets/restaurantes/coffelab.png'),
+    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
+},
+{
+    id:"11",
+    name:"Pollos Mamavila",
+    category:"Pollo Chuco",
+    location:"9 Avenida, 27 Calle N.O., Col. Jardines del Valle, San Pedro Sula",
+    price:"L.180 promedio",
+    rating:5,
+    image:require('../../assets/restaurantes/mamavila.png'),
+    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
+},
+{
+    id:"12",
+    name:"La Fonda ",
+    category:"Comida Mexicana",
+    location:"Colonia Jardines del Valle, San Pedro Sula",
+    price:"L.220 promedio",
+    rating:5,
+    image:require('../../assets/restaurantes/fonda.png'),
+    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
+},
+{
+    id:"13",
+    name:"Tacos Birria ",
+    category:"Comida Mexicana",
+    location:"Colonia Jardines del Valle, San Pedro Sula",
+    price:"L.180 promedio",
+    rating:5,
+    image:require('../../assets/restaurantes/tacosbirria.png'),
+    phone:"+504 2550-1001",
+schedule:"Lunes - Domingo | 11:00 AM - 10:00 PM",
+},
     ];
 
     return (
@@ -72,6 +172,8 @@ export default function RestaurantsScreen() {
                     price={restaurant.price}
                     rating={restaurant.rating}
                     image={restaurant.image}
+                    phone={restaurant.phone}
+                    schedule={restaurant.schedule}
                 />
                 ))}
                 </View>

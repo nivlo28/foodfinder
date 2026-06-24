@@ -45,6 +45,7 @@ export default function HomeScreen() {
                 <CategoryCard title="Italiano" icon="🍝" />
                 <CategoryCard title="Mexicano" icon="🌮" />
                 <CategoryCard title="Postres" icon="🍰" />
+                <CategoryCard title="Cafés" icon="☕" />
             </ScrollView>
 
             <Text

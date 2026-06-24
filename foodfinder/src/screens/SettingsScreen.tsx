@@ -23,6 +23,67 @@ export default function SettingsScreen({ navigation }: any) {
           thumbColor={colors.onSecondary}
         />
       </View>
+      
+       <View style={{ height: 100 }} />
+
+      <View
+        style={[
+          styles.infoCard,
+          {
+            backgroundColor: colors.inputBackground,
+            borderColor: colors.border,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.infoTitle,
+            { color: colors.primary },
+          ]}
+        >
+          🍔 FoodFinder
+        </Text>
+
+        <Text
+          style={[
+            styles.infoText,
+            { color: colors.text },
+          ]}
+        >
+          Aplicación diseñada para descubrir restaurantes,
+          cafeterías y lugares gastronómicos en Honduras.
+        </Text>
+      </View>
+
+      <View 
+        style={[
+          styles.infoCard,
+          {
+            backgroundColor: colors.inputBackground,
+            borderColor: colors.border,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.infoTitle,
+            { color: colors.primary },
+          ]}
+        >
+          ℹ️ Acerca de FoodFinder
+        </Text>
+
+        <Text
+          style={[
+            styles.infoText,
+            { color: colors.text },
+          ]}
+        >
+          FoodFinder permite explorar restaurantes,
+          consultar información detallada y guardar
+          lugares favoritos para futuras visitas.
+        </Text>
+      </View>
 
       <TouchableOpacity
         style={[styles.exitButton, { backgroundColor: colors.error }]}
@@ -71,5 +132,23 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  infoCard: {
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 15,
+    marginBottom: 12,
+    marginTop: 5,
+  },
+
+  infoTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+
+  infoText: {
+    fontSize: 14,
+    lineHeight: 20,
   },
 });

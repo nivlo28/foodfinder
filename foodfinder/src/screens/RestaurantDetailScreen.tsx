@@ -1,5 +1,5 @@
 import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import RatingStar from "../components/RatingStar";
 import { useTheme } from "../contexts/ThemeContext";
 
@@ -15,10 +15,13 @@ export default function RestaurantDetailScreen() {
         price,
         rating,
         image,
+        phone,
+        schedule,
     } = route.params;
    return (
-     <View style={[styles.container,{backgroundColor:colors.background}
-      ]}
+     <ScrollView
+        style={{backgroundColor:colors.background}}
+            contentContainerStyle={styles.container}
     >
 
         <Image
@@ -49,7 +52,16 @@ export default function RestaurantDetailScreen() {
             💰 {price}
         </Text>
 
-    </View>
+        <Text style={[styles.info,{color:colors.textSecondary}]}>
+            🕒 {schedule}
+        </Text>
+
+        <Text style={[styles.info,{color:colors.textSecondary}]}>
+            📞 {phone}
+        </Text>
+
+     
+    </ScrollView>
 );
 
 }
@@ -79,6 +91,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 15,
+    },
+
+     infoCard: {
+        borderRadius: 12,
+        borderWidth: 1,
+        padding: 15,
+        marginTop: 15,
     },
     
 });
