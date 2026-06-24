@@ -3,6 +3,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import LoginScreen from '../screens/LoginScreen';
 import TabsNavigator from './TabsNavigator';
 import RestaurantDetailScreen from '../screens/RestaurantDetailScreen'
+import ReviewsScreen from '../screens/ReviewsScreen'
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,11 @@ export default function StackNavigator() {
    name="RestaurantDetail"
    component={RestaurantDetailScreen}
    
+   />
+   <Stack.Screen
+   name="Reviews"
+   component={ReviewsScreen}
+   options={{ title: "Reseñas" }}
    />
   </Stack.Navigator>
   );
