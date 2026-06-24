@@ -1,77 +1,53 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
-
-import CustomInput from '../components/CustomInput';
-import CustomButton from '../components/CustomButton';
-import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { useState } from "react";
+import CustomInput from "../components/CustomInput";
+import CustomButton from "../components/CustomButton";
+import { useAuth } from "../contexts/AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function LoginScreen({ navigation }: any) {
-  const { login } = useAuth();
-  const { colors } = useTheme();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const { login } = useAuth();
+  const { colors, isDark } = useTheme();
 
   const handleLogin = async () => {
-    setError('');
-
-    if (!email || !password) {
-      setError('Complete todos los campos');
+    if (email === '' || password === '') {
+      console.log('Debe llenar todos los campos');
       return;
     }
 
-    setLoading(true);
-
-    try {
-      const success = await login(
-        email.trim(),
-        password
-      );
-
-      if (!success) {
-        setError('Correo o contraseña incorrectos');
-      }
-    } catch (err) {
-      setError('Error al iniciar sesión');
+    const success = await login(email, password);
+    if (success) {
+      navigation.navigate('MainTabs');
     }
-
-    setLoading(false);
   };
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={{ flex: 1, backgroundColor: colors.background }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.logoContainer}>
-          <Text style={styles.logo}>🍔</Text>
-
-          <Text style={[styles.title, { color: colors.text }]}>
-            FoodFinder
-          </Text>
-
-          <Text
+        <View style={styles.brandSection}>
+          <View
             style={[
-              styles.subtitle,
-              { color: colors.textSecondary },
+              styles.logoCircle,
+              { backgroundColor: isDark ? colors.inputBackground : "#FFF1E0" },
             ]}
           >
-            Encuentra los restaurantes favoritos de SPS
+            <Text style={styles.logoEmoji}>🍔</Text>
+          </View>
+
+          <Text style={[styles.brandTitle, { color: colors.primary }]}>
+            FoodFinder
+          </Text>
+          <Text style={[styles.brandTagline, { color: colors.textSecondary }]}>
+            Descubre los mejores restaurantes
           </Text>
         </View>
 
@@ -79,61 +55,54 @@ export default function LoginScreen({ navigation }: any) {
           style={[
             styles.card,
             {
-              backgroundColor: colors.headerBackground,
+              backgroundColor: colors.inputBackground,
               borderColor: colors.border,
             },
           ]}
         >
           <Text style={[styles.cardTitle, { color: colors.text }]}>
-            Iniciar Sesión
+            Bienvenido de nuevo
+          </Text>
+          <Text style={[styles.cardSubtitle, { color: colors.textSecondary }]}>
+            Inicia sesión para continuar
           </Text>
 
-          <CustomInput
-            label="Correo electrónico"
-            placeholder="ejemplo@gmail.com"
-            value={email}
-            onChange={setEmail}
-            type="email"
-          />
+          <View style={styles.form}>
+            <CustomInput
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={setEmail}
+              type="email"
+            />
 
-          <CustomInput
-            label="Contraseña"
-            placeholder="Ingresa tu contraseña"
-            value={password}
-            onChange={setPassword}
-            type="password"
-          />
-
-          {error ? (
-            <Text style={[styles.error, { color: colors.error }]}>
-              {error}
-            </Text>
-          ) : null}
+            <CustomInput
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={setPassword}
+            />
+          </View>
 
           <CustomButton
             title="Iniciar Sesión"
             onPress={handleLogin}
-            loading={loading}
           />
 
-          <View style={styles.footer}>
-            <Text
-              style={[
-                styles.footerText,
-                { color: colors.textSecondary },
-              ]}
-            >
+          <View style={styles.dividerRow}>
+            <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+            <Text style={[styles.dividerText, { color: colors.textSecondary }]}>o</Text>
+            <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+          </View>
+
+          <View style={styles.registerRow}>
+            <Text style={{ color: colors.textSecondary, fontSize: 14 }}>
               ¿No tienes cuenta?
             </Text>
-
             <Text
-              style={[
-                styles.linkText,
-                { color: colors.primary },
-              ]}
+              style={[styles.registerLink, { color: colors.primary }]}
               onPress={() => navigation.navigate('Register')}
             >
-              Crear una cuenta
+              {" "}Regístrate
             </Text>
           </View>
         </View>
@@ -143,69 +112,79 @@ export default function LoginScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-
-  content: {
+  scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 24,
   },
-
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 30,
+  brandSection: {
+    alignItems: "center",
+    marginBottom: 32,
   },
-
-  logo: {
-    fontSize: 60,
-    marginBottom: 10,
+  logoCircle: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
   },
-
-  title: {
-    fontSize: 32,
-    fontWeight: '800',
+  logoEmoji: {
+    fontSize: 44,
   },
-
-  subtitle: {
-    marginTop: 5,
-    fontSize: 15,
+  brandTitle: {
+    fontSize: 30,
+    fontWeight: "800",
+    letterSpacing: 0.3,
   },
-
+  brandTagline: {
+    fontSize: 14,
+    marginTop: 4,
+  },
   card: {
+    width: "100%",
+    borderRadius: 20,
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 22,
+    padding: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 2,
   },
-
   cardTitle: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 4,
+  },
+  cardSubtitle: {
+    fontSize: 14,
     marginBottom: 20,
-    textAlign: 'center',
   },
-
-  error: {
-    fontSize: 13,
-    marginBottom: 12,
-    fontWeight: '600',
+  form: {
+    marginBottom: 4,
   },
-
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+  dividerRow: {
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 20,
+    marginBottom: 16,
   },
-
-  footerText: {
-    fontSize: 14,
+  dividerLine: {
+    flex: 1,
+    height: 1,
   },
-
-  linkText: {
+  dividerText: {
+    marginHorizontal: 10,
+    fontSize: 12,
+  },
+  registerRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  registerLink: {
     fontSize: 14,
-    fontWeight: '700',
-    marginLeft: 5,
+    fontWeight: "700",
   },
 });
