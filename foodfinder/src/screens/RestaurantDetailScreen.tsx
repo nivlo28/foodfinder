@@ -1,14 +1,16 @@
-import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import RatingStar from "../components/RatingStar";
 import { useTheme } from "../contexts/ThemeContext";
 
 
 export default function RestaurantDetailScreen() {
     const route = useRoute<any>();
+    const navigation = useNavigation<any>();
     const {colors}=useTheme();
 
     const{
+        id,
         name,
         category,
         location,
@@ -60,6 +62,15 @@ export default function RestaurantDetailScreen() {
             📞 {phone}
         </Text>
 
+        <TouchableOpacity
+            style={[styles.reviewsButton, { backgroundColor: colors.buttonPrimaryBg }]}
+            onPress={() => navigation.navigate("Reviews", { restaurantId: id, restaurantName: name })}
+        >
+            <Text style={{ color: colors.buttonPrimaryText, fontWeight: "bold", fontSize: 16 }}>
+                ⭐ Ver reseñas
+            </Text>
+        </TouchableOpacity>
+
      
     </ScrollView>
 );
@@ -98,6 +109,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 15,
         marginTop: 15,
+    },
+
+    reviewsButton: {
+        marginTop: 20,
+        borderRadius: 10,
+        paddingVertical: 14,
+        alignItems: "center",
     },
     
 });
