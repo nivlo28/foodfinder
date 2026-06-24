@@ -1,19 +1,51 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, UIManager, Platform, LayoutAnimation } from 'react-native';
 import CustomButton from '../components/CustomButton';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CustomInput from '../components/CustomInput';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../contexts/ThemeContext';
 import CategoryCard from '../components/CategoryCard';
-import { ScrollView } from 'react-native';
-import RestaurantCard from '../components/RestaurantCard';
 import FeaturedRestaurantCard from '../components/FeaturedRestaurantCard';
+import { restaurants } from '../data/restaurants';
+import { useRestaurantRatings } from '../hooks/useRestaurantRatings';
+
+// Habilita las animaciones de layout en Android (en iOS ya vienen activas)
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default function HomeScreen() {
 
     const [searchText, setSearchText] = useState('');
     const navigation = useNavigation<any>();
     const { colors } = useTheme();
+
+    const { getDisplayRating, getRecommendedPercent, ratings } = useRestaurantRatings(
+        (id) => restaurants.find((r) => r.id === id)?.rating ?? 0
+    );
+
+    // Cada vez que cambian los ratings (nuevas reseñas), anima el
+    // reordenamiento de las tarjetas en vez de saltar de golpe.
+    useEffect(() => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    }, [ratings]);
+
+    // Destacados: los primeros 3 de la lista, siempre en el mismo orden.
+    const featured = restaurants.slice(0, 3);
+
+    // Mejor calificados: se reordenan según el % de personas que
+    // recomiendan el restaurante (de mayor a menor). Si dos restaurantes
+    // tienen el mismo % de recomendados, se desempata con el rating real.
+    const topRated = useMemo(() => {
+        return [...restaurants]
+            .sort((a, b) => {
+                const recA = getRecommendedPercent(a.id);
+                const recB = getRecommendedPercent(b.id);
+                if (recB !== recA) return recB - recA;
+                return getDisplayRating(b.id) - getDisplayRating(a.id);
+            })
+            .slice(0, 5);
+    }, [ratings]);
 
     return (
       <ScrollView
@@ -60,23 +92,15 @@ export default function HomeScreen() {
              horizontal
              showsHorizontalScrollIndicator={false}
 >
-            <FeaturedRestaurantCard
-              name="Cima Restaurant"
-              rating={5}
-              image={require('../../assets/restaurantes/Cima.jpg')}
-             />
-
-             <FeaturedRestaurantCard
-               name="Brasa Viva"
-               rating={4}
-               image={require('../../assets/restaurantes/brasa viva.jpg')}
-             />
-
-            <FeaturedRestaurantCard
-                name="Osteria Pastai"
-               rating={5}
-               image={require('../../assets/restaurantes/osteria.png')}
-             />
+            {featured.map((restaurant) => (
+                <FeaturedRestaurantCard
+                    key={restaurant.id}
+                    name={restaurant.name}
+                    rating={getDisplayRating(restaurant.id)}
+                    image={restaurant.image}
+                    onPress={() => navigation.navigate("RestaurantDetail", restaurant)}
+                />
+            ))}
             </ScrollView>
 
             <Text
@@ -93,23 +117,15 @@ export default function HomeScreen() {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{paddingHorizontal:5}}
         >
-            <FeaturedRestaurantCard
-             name="Osteria Pastai"
-             rating={5}
-             image={require('../../assets/restaurantes/osteria.png')}
-        />
-
-           <FeaturedRestaurantCard
-             name="Restaurante Tony's"
-             rating={5}
-             image={require('../../assets/restaurantes/TONY.jpg')}
-          />
-
-          <FeaturedRestaurantCard
-              name="Cima Restaurant"
-              rating={5}
-              image={require('../../assets/restaurantes/Cima.jpg')}
-          />
+            {topRated.map((restaurant) => (
+                <FeaturedRestaurantCard
+                    key={restaurant.id}
+                    name={restaurant.name}
+                    rating={getDisplayRating(restaurant.id)}
+                    image={restaurant.image}
+                    onPress={() => navigation.navigate("RestaurantDetail", restaurant)}
+                />
+            ))}
          </ScrollView>
  
         <View style={{marginTop:20}}>
