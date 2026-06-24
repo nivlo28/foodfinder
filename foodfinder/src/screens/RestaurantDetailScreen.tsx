@@ -1,121 +1,51 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
-import RatingStar from "../components/RatingStar";
-import { useTheme } from "../contexts/ThemeContext";
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
+import RestaurantCard from '../components/RestaurantCard';
+import { restaurants } from '../data/restaurants';
+import { useRestaurantRatings } from '../hooks/useRestaurantRatings';
 
+export default function RestaurantsScreen() {
+    const { colors } = useTheme();
+    const { getDisplayRating } = useRestaurantRatings(
+        (id) => restaurants.find((r) => r.id === id)?.rating ?? 0
+    );
 
-export default function RestaurantDetailScreen() {
-    const route = useRoute<any>();
-    const navigation = useNavigation<any>();
-    const {colors}=useTheme();
+    return (
+        <ScrollView style={{ backgroundColor: colors.background }}>
+            <View style={styles.container}>
+                <Text style={[styles.title, { color: colors.primary }]}>
+                    Restaurantes
+                </Text>
 
-    const{
-        id,
-        name,
-        category,
-        location,
-        price,
-        rating,
-        image,
-        phone,
-        schedule,
-    } = route.params;
-   return (
-     <ScrollView
-        style={{backgroundColor:colors.background}}
-            contentContainerStyle={styles.container}
-    >
-
-        <Image
-            source={image}
-            style={styles.image}
-        />
-
-        <Text style={[styles.title,{color:colors.text}
-        ]}
-        >
-            {name}
-        </Text>
-
-        <RatingStar
-            rating={rating}
-            readonly={true}
-        />
-
-        <Text style={[styles.info,{color:colors.textSecondary}]}>
-            🍽️ {category}
-        </Text>
-
-        <Text style={[styles.info,{color:colors.textSecondary}]}>
-            📍 {location}
-        </Text>
-
-        <Text style={[styles.price,{color:colors.primary}]}>
-            💰 {price}
-        </Text>
-
-        <Text style={[styles.info,{color:colors.textSecondary}]}>
-            🕒 {schedule}
-        </Text>
-
-        <Text style={[styles.info,{color:colors.textSecondary}]}>
-            📞 {phone}
-        </Text>
-
-        <TouchableOpacity
-            style={[styles.reviewsButton, { backgroundColor: colors.buttonPrimaryBg }]}
-            onPress={() => navigation.navigate("Reviews", { restaurantId: id, restaurantName: name })}
-        >
-            <Text style={{ color: colors.buttonPrimaryText, fontWeight: "bold", fontSize: 16 }}>
-                ⭐ Ver reseñas
-            </Text>
-        </TouchableOpacity>
-
-     
-    </ScrollView>
-);
-
+                {restaurants.map((restaurant) => (
+                    <RestaurantCard
+                    key={restaurant.id}
+                    id={restaurant.id}
+                    name={restaurant.name}
+                    category={restaurant.category}
+                    location={restaurant.location}
+                    price={restaurant.price}
+                    rating={getDisplayRating(restaurant.id)}
+                    image={restaurant.image}
+                    phone={restaurant.phone}
+                    schedule={restaurant.schedule}
+                />
+                ))}
+                </View>
+                </ScrollView>
+    );
 }
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding:20,
+        alignItems: "center",
+        padding: 15,
     },
     title: {
-        fontSize: 30,
+        fontSize: 20,
         fontWeight: "bold",
+        marginBottom: 15,
     },
-    image:{
-        width:"100%",
-        height:220,
-        borderRadius:12,
-        marginBottom: 20,
-    },
-
-    info: {
-    fontSize: 16,
-    marginTop: 10,
-    },
-
-    price: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 15,
-    },
-
-     infoCard: {
-        borderRadius: 12,
-        borderWidth: 1,
-        padding: 15,
-        marginTop: 15,
-    },
-
-    reviewsButton: {
-        marginTop: 20,
-        borderRadius: 10,
-        paddingVertical: 14,
-        alignItems: "center",
-    },
-    
 });
