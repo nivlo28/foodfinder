@@ -5,7 +5,8 @@ import { useAppSelector } from "../store/hooks";
 import { supabase } from "../services/supabaseClient";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { Buffer } from "buffer";
 
@@ -17,6 +18,26 @@ export default function ProfileScreen() {
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [uploading, setUploading] = useState(false);
+  const [myReviewsCount, setMyReviewsCount] = useState(0);
+
+  const loadMyReviewsCount = useCallback(async () => {
+    if (!user) return;
+
+    const { count, error } = await supabase
+      .from("reviews")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id);
+
+    if (!error && count !== null) {
+      setMyReviewsCount(count);
+    }
+  }, [user]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadMyReviewsCount();
+    }, [loadMyReviewsCount])
+  );
 
   const handlePickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -127,12 +148,8 @@ export default function ProfileScreen() {
           <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Favoritos</Text>
         </View>
         <View style={styles.statItem}>
-          <Text style={[styles.statNumber, { color: colors.primary }]}>0</Text>
+          <Text style={[styles.statNumber, { color: colors.primary }]}>{myReviewsCount}</Text>
           <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Reseñas</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={[styles.statNumber, { color: colors.primary }]}>0</Text>
-          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Fotos</Text>
         </View>
       </View>
 

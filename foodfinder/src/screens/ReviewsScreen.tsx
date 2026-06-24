@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import RatingStar from "../components/RatingStar";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
@@ -36,6 +37,7 @@ export default function ReviewsScreen() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const [rating, setRating] = useState(0);
   const [isRecommended, setIsRecommended] = useState<boolean | null>(null);
@@ -103,6 +105,34 @@ export default function ReviewsScreen() {
     fetchReviews();
   };
 
+  const handleDelete = (reviewId: string) => {
+    Alert.alert(
+      "Eliminar reseña",
+      "¿Seguro que quieres eliminar esta reseña? Esta acción no se puede deshacer.",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Eliminar",
+          style: "destructive",
+          onPress: async () => {
+            setDeletingId(reviewId);
+            const { error } = await supabase
+              .from("reviews")
+              .delete()
+              .eq("id", reviewId);
+            setDeletingId(null);
+
+            if (error) {
+              Alert.alert("Error", "No se pudo eliminar la reseña.");
+              return;
+            }
+            fetchReviews();
+          },
+        },
+      ]
+    );
+  };
+
   const renderReview = ({ item }: { item: Review }) => (
     <View
       style={[
@@ -114,17 +144,33 @@ export default function ReviewsScreen() {
         <Text style={[styles.reviewUser, { color: colors.text }]}>
           {item.user_name}
         </Text>
-        <View
-          style={[
-            styles.badge,
-            {
-              backgroundColor: item.is_recommended ? "#2e7d32" : colors.error,
-            },
-          ]}
-        >
-          <Text style={styles.badgeText}>
-            {item.is_recommended ? "👍 Recomendado" : "👎 No recomendado"}
-          </Text>
+        <View style={styles.headerRight}>
+          <View
+            style={[
+              styles.badge,
+              {
+                backgroundColor: item.is_recommended ? "#2e7d32" : colors.error,
+              },
+            ]}
+          >
+            <Text style={styles.badgeText}>
+              {item.is_recommended ? "👍 Recomendado" : "👎 No recomendado"}
+            </Text>
+          </View>
+
+          {user?.id === item.user_id && (
+            <TouchableOpacity
+              onPress={() => handleDelete(item.id)}
+              disabled={deletingId === item.id}
+              style={styles.deleteButton}
+            >
+              {deletingId === item.id ? (
+                <ActivityIndicator size="small" color={colors.error} />
+              ) : (
+                <Ionicons name="trash-outline" size={20} color={colors.error} />
+              )}
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -344,6 +390,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     flexShrink: 1,
   },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
   badge: {
     borderRadius: 6,
     paddingHorizontal: 8,
@@ -353,6 +404,9 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 11,
     fontWeight: "bold",
+  },
+  deleteButton: {
+    padding: 4,
   },
   reviewComment: {
     fontSize: 14,
