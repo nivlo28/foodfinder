@@ -1,7 +1,9 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import RatingStar from "../components/RatingStar";
 import { useTheme } from "../contexts/ThemeContext";
+import { supabase } from "../services/supabaseClient";
 
 
 export default function RestaurantDetailScreen() {
@@ -20,6 +22,33 @@ export default function RestaurantDetailScreen() {
         phone,
         schedule,
     } = route.params;
+
+    const [displayRating, setDisplayRating] = useState(rating);
+    const [totalReviews, setTotalReviews] = useState(0);
+
+    const loadReviewStats = useCallback(async () => {
+        const { data, error } = await supabase
+            .from("reviews")
+            .select("rating")
+            .eq("restaurant_id", id);
+
+        if (error || !data) return;
+
+        if (data.length > 0) {
+            const sum = data.reduce((acc, r) => acc + r.rating, 0);
+            setDisplayRating(Math.round(sum / data.length));
+        } else {
+            setDisplayRating(rating);
+        }
+        setTotalReviews(data.length);
+    }, [id]);
+
+    useFocusEffect(
+        useCallback(() => {
+            loadReviewStats();
+        }, [loadReviewStats])
+    );
+
    return (
      <ScrollView
         style={{backgroundColor:colors.background}}
@@ -38,7 +67,7 @@ export default function RestaurantDetailScreen() {
         </Text>
 
         <RatingStar
-            rating={rating}
+            rating={displayRating}
             readonly={true}
         />
 
@@ -67,7 +96,7 @@ export default function RestaurantDetailScreen() {
             onPress={() => navigation.navigate("Reviews", { restaurantId: id, restaurantName: name })}
         >
             <Text style={{ color: colors.buttonPrimaryText, fontWeight: "bold", fontSize: 16 }}>
-                ⭐ Ver reseñas
+                ⭐ Ver reseñas ({totalReviews})
             </Text>
         </TouchableOpacity>
 
